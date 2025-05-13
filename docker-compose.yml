@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pressure_db
+    volumes:
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports: ["5432:5432"]
+
+  generator:
+    build: .
+    command: ["/app/generator"]
+    environment:
+      PG_CONN: postgres://user:password@db:5432/pressure_db?sslmode=disable
+    depends_on: [db]
+
+  server:
+    build: .
+    command: ["/app/server"]
+    environment:
+      PG_CONN: postgres://user:password@db:5432/pressure_db?sslmode=disable
+    ports: ["8080:8080"]
+    depends_on: [db]
