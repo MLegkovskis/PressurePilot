@@ -26,6 +26,7 @@ A small Go-based microservice demo that simulates reservoir pressure readings, s
 
 ```
 
+go-industrial-ts/
 ├── cmd/
 │   ├── generator/      # data generator binary
 │   │   └── main.go
@@ -55,7 +56,13 @@ A small Go-based microservice demo that simulates reservoir pressure readings, s
 
 ## ⚡ Quick Start with Docker
 
-1. **Build & launch**
+1. **Clone & enter**  
+   ```bash
+   git clone <repo-url>
+   cd go-industrial-ts
+````
+
+2. **Build & launch**
 
    ```bash
    docker-compose up --build
@@ -65,10 +72,10 @@ A small Go-based microservice demo that simulates reservoir pressure readings, s
    * **generator** begins inserting data every 0.5 s
    * **server** listens on `localhost:8080`
 
-2. **Browse**
+3. **Browse**
    Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-3. **Stop**
+4. **Stop**
 
    ```bash
    docker-compose down

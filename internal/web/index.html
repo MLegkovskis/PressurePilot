@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pressure Demo</title>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 1rem; }
+    #chart { width: 100%; height: 80vh; }
+    label { display: flex; align-items: center; gap: 0.5rem; }
+    input[type="range"] { flex: 1; }
+    #horizon-val { font-weight: bold; width: 2rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Industrial Time-Series Prediction</h1>
+
+  <label>
+    Forecast horizon:
+    <input type="range" id="horizon" value="50" min="1" max="2000" step="1">
+    <span id="horizon-val">50</span>
+    <button onclick="refresh()">Update</button>
+  </label>
+
+  <div id="chart"></div>
+
+  <script>
+    async function fetchJSON(url) {
+      const r = await fetch(url);
+      return r.json();
+    }
+
+    async function refresh() {
+      const h = document.getElementById('horizon').value || 50;
+
+      // historical readings
+      const hist = await fetchJSON('/api/readings');
+      if (hist.length === 0) {
+        document.getElementById('chart').innerHTML = '<p>No data yet…</p>';
+        return;
+      }
+
+      // prediction
+      const fut  = await fetchJSON(`/api/predict?horizon=${h}`);
+
+      // build raw-data trace
+      const histTrace = {
+        x: hist.map(r => r.id),
+        y: hist.map(r => r.pressure),
+        mode: 'lines+markers',
+        name: 'Raw data',
+        marker: { size: 4 }
+      };
+
+      // moving average (window = 3)
+      function movingAvg(arr, w) {
+        const out = [];
+        for (let i = 0; i < arr.length; i++) {
+          const slice = arr.slice(Math.max(0, i-w+1), i+1);
+          out.push(slice.reduce((a,b) => a+b, 0) / slice.length);
+        }
+        return out;
+      }
+      const rawY = hist.map(r => r.pressure);
+      const smoothY = movingAvg(rawY, 3);
+      const smoothTrace = {
+        x: hist.map(r => r.id),
+        y: smoothY,
+        mode: 'lines',
+        name: 'Smoothed (w=3)',
+        line: { width: 2, dash: 'dash' }
+      };
+
+      // prediction trace
+      const predTrace = {
+        x: fut.ids,
+        y: fut.pred,
+        mode: 'lines',
+        name: `Forecast (${h})`,
+        line: { width: 3 }
+      };
+
+      const layout = {
+        margin: { t: 40 },
+        xaxis: { title: 'Reading #' },
+        yaxis: { title: 'Pressure' },
+        legend: { orientation: 'h' }
+      };
+
+      Plotly.newPlot('chart', [histTrace, smoothTrace, predTrace], layout, {responsive:true});
+    }
+
+    // update slider display
+    document.getElementById('horizon').addEventListener('input', e => {
+      document.getElementById('horizon-val').textContent = e.target.value;
+    });
+
+    refresh();                     // initial draw
+    setInterval(refresh, 500);     // auto-refresh every 0.5 s
+  </script>
+</body>
+</html>
