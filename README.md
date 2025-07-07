@@ -61,17 +61,15 @@ graph TD
   * **Mathematical Modeling**: Practical application of numerical computing (**Gonum**) to generate Fourier series features and perform a linear regression for forecasting.
 
 -----
-
 ## 🛠️ Technology Stack
 
-| Category | Technology |
+| Category | Technologies |
 | :--- | :--- |
-| **Backend** |   |
-| **Database** |  |
-| **Frontend** |   |
-| **DevOps** |   |
-| **Libraries** | `gonum/mat` (Linear Algebra), `jackc/pgx` (Postgres Driver), `plotly.js` (Charting) |
-
+| **Backend** | Go, Gin |
+| **Database** | PostgreSQL |
+| **Frontend** | HTML, JavaScript, Plotly.js |
+| **DevOps** | Docker, Docker Compose, Shell |
+| **Go Libraries** | `gonum/mat`, `jackc/pgx` |
 -----
 
 ## 🚀 Getting Started
