@@ -8,10 +8,6 @@ A multi-container Go application that demonstrates a full-cycle, real-time data 
 
 The project is designed to showcase a modern microservice architecture, containerization, data persistence, and CI/CD-ready design patterns.
 
-\<br\>
-
-> *Live UI showing historical data (blue), a smoothed moving average (black), and a real-time forecast (orange).*
-
 -----
 
 ## 🏛️ System Architecture
